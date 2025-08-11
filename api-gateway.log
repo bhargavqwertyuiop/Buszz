@@ -1,0 +1,2 @@
+API Gateway listening on port 8080
+[0mGET /health [32m200[0m 6.911 ms - 15[0m
