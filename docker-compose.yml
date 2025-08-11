@@ -1,0 +1,86 @@
+version: "3.9"
+
+services:
+  api-gateway:
+    build: ./services/api-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      - NODE_ENV=production
+      - PORT=8080
+      - JWT_SECRET=supersecretjwt
+      - AUTH_SERVICE_URL=http://auth-service:3001
+      - USER_SERVICE_URL=http://user-service:3002
+      - CATALOG_SERVICE_URL=http://catalog-service:3003
+      - BOOKING_SERVICE_URL=http://booking-service:3004
+      - PAYMENT_SERVICE_URL=http://payment-service:3005
+      - NOTIFICATION_SERVICE_URL=http://notification-service:3006
+    depends_on:
+      - auth-service
+      - user-service
+      - catalog-service
+      - booking-service
+      - payment-service
+      - notification-service
+
+  auth-service:
+    build: ./services/auth-service
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+      - JWT_SECRET=supersecretjwt
+      - USER_SERVICE_URL=http://user-service:3002
+    expose:
+      - "3001"
+
+  user-service:
+    build: ./services/user-service
+    environment:
+      - NODE_ENV=production
+      - PORT=3002
+      - JWT_SECRET=supersecretjwt
+    expose:
+      - "3002"
+
+  catalog-service:
+    build: ./services/catalog-service
+    environment:
+      - NODE_ENV=production
+      - PORT=3003
+      - JWT_SECRET=supersecretjwt
+    expose:
+      - "3003"
+
+  booking-service:
+    build: ./services/booking-service
+    environment:
+      - NODE_ENV=production
+      - PORT=3004
+      - JWT_SECRET=supersecretjwt
+      - CATALOG_SERVICE_URL=http://catalog-service:3003
+      - PAYMENT_SERVICE_URL=http://payment-service:3005
+      - NOTIFICATION_SERVICE_URL=http://notification-service:3006
+    expose:
+      - "3004"
+
+  payment-service:
+    build: ./services/payment-service
+    environment:
+      - NODE_ENV=production
+      - PORT=3005
+      - JWT_SECRET=supersecretjwt
+    expose:
+      - "3005"
+
+  notification-service:
+    build: ./services/notification-service
+    environment:
+      - NODE_ENV=production
+      - PORT=3006
+      - JWT_SECRET=supersecretjwt
+    expose:
+      - "3006"
+
+networks:
+  default:
+    name: booking-mesh
